@@ -15,7 +15,7 @@ load_dotenv()
 TOGETHER_API_KEY = os.getenv("TOGETHER_API_KEY")
 
 # Модель для генерации
-MODEL_NAME = "meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo"
+MODEL_NAME = "meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8"
 
 # Максимальное количество итераций CoT
 MAX_COT_ITERATIONS = 4
