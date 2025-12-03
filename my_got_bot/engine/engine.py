@@ -30,7 +30,7 @@ def think_one_step(user_message, history, current_cot, is_first_step=True):
     Выполняет одну итерацию Chain-of-Thought размышлений.
     
     Параметры:
-    - user_message: текущее сообщение пользователя
+    - user_message: текущее сообщение пользователя (str или List[Dict] для мультимодального контента)
     - history: отформатированная история диалога
     - current_cot: текущая цепочка мыслей
     - is_first_step: True для первой итерации, False для последующих
@@ -45,15 +45,43 @@ def think_one_step(user_message, history, current_cot, is_first_step=True):
     prompt_file = "cot_initial.txt" if is_first_step else "cot_refine.txt"
     prompt_template = load_prompt(prompt_file)
     
-    # Подставляем переменные в промпт
-    prompt = prompt_template.format(
-        history=history,
-        user_message=user_message,
-        current_cot=current_cot if current_cot else "(empty — starting fresh)"
-    )
+    # Формируем контент сообщения
+    # Если user_message — это список (мультимодальный контент)
+    if isinstance(user_message, list):
+        # Для промпта берём только текстовую часть
+        text_parts = [item.get("text", "") for item in user_message if item.get("type") == "text"]
+        user_message_text = " ".join(text_parts) if text_parts else "[multimodal content]"
+        
+        # Формируем мультимодальный контент для API
+        prompt_text = prompt_template.format(
+            history=history,
+            user_message=user_message_text,
+            current_cot=current_cot if current_cot else "(empty — starting fresh)"
+        )
+        
+        # Создаём контент: сначала промпт, потом мультимодальный контент
+        message_content = [{"type": "text", "text": prompt_text}]
+        
+        # Добавляем изображения, если есть
+        for item in user_message:
+            if item.get("type") == "image_url":
+                message_content.append(item)
+    else:
+        # Обычное текстовое сообщение
+        prompt_text = prompt_template.format(
+            history=history,
+            user_message=user_message,
+            current_cot=current_cot if current_cot else "(empty — starting fresh)"
+        )
+        message_content = prompt_text
     
     print(f"🤖 Отправка запроса к {MODEL_NAME}...")
     print(f"📝 Используется промпт: {prompt_file}")
+    
+    if isinstance(message_content, list):
+        has_image = any(item.get("type") == "image_url" for item in message_content)
+        if has_image:
+            print("🖼️  Включен мультимодальный режим (vision)")
     
     # Формируем запрос к Together.ai API
     url = "https://api.together.xyz/v1/chat/completions"
@@ -65,7 +93,7 @@ def think_one_step(user_message, history, current_cot, is_first_step=True):
     payload = {
         "model": MODEL_NAME,
         "messages": [
-            {"role": "user", "content": prompt}
+            {"role": "user", "content": message_content}
         ],
         "temperature": 0.7,
         "max_tokens": 1024
