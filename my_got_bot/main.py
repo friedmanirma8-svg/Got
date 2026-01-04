@@ -8,7 +8,7 @@
 
 from inbox import get_user_message
 from eyes import process_visual_content
-from memory import ChatMemory, BigMemory
+from memory import ChatMemory, VectorMemory
 from brain import BrainText
 from engine import think_one_step
 from mouth import speak
@@ -20,13 +20,13 @@ def main():
     Главная функция — бесконечный цикл общения с пользователем.
     """
     print("\n" + "=" * 60)
-    print("🤖 Chain-of-Thought Chatbot (Together.ai)")
+    print("🤖 Chain-of-Thought Chatbot (Together.ai) + Vector Memory")
     print("=" * 60)
     print("Введите 'exit' или 'quit' для выхода\n")
     
     # Инициализируем компоненты
     chat_memory = ChatMemory(max_exchanges=20)
-    big_memory = BigMemory()  # Пока не используется
+    vector_memory = VectorMemory(persist_dir="./chroma_db")  # Долгосрочная память с семантическим поиском
     brain = BrainText()
     
     # Основной цикл
@@ -47,6 +47,15 @@ def main():
         # 3. Получаем историю диалога из памяти
         history = chat_memory.get_formatted_history()
         
+        # 3b. Получаем релевантный контекст из векторной долгосрочной памяти
+        user_text = user_message if isinstance(user_message, str) else "multimodal content"
+        relevant_context = vector_memory.get_relevant_context(user_text, n_results=3)
+        
+        print("\n" + "=" * 60)
+        print("=== VECTOR MEMORY ===")
+        print("=" * 60)
+        print(relevant_context)
+        
         # 4. Очищаем brain для нового запроса
         brain.clear()
         
@@ -62,6 +71,7 @@ def main():
                 user_message=processed_message,
                 history=history,
                 current_cot=brain.get_chain(),
+                relevant_context=relevant_context,
                 is_first_step=is_first
             )
             
@@ -89,7 +99,11 @@ def main():
         
         # 7. Сохраняем обмен в память
         chat_memory.add_exchange(user_message, final_answer)
-        print(f"💾 Сохранено в память ({len(chat_memory)} обменов)")
+        vector_memory.add_exchange(user_text, final_answer)  # Сохраняем в долгосрочную память
+        
+        print(f"💾 Сохранено в память:")
+        print(f"   Краткосрочная: {len(chat_memory)} обменов")
+        print(f"   Долгосрочная: {vector_memory.get_stats()['total_exchanges']} обменов")
 
 
 if __name__ == "__main__":

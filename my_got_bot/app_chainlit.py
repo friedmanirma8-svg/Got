@@ -8,7 +8,7 @@
 
 import chainlit as cl
 from eyes import process_visual_content
-from memory import ChatMemory
+from memory import ChatMemory, VectorMemory
 from brain import BrainText
 from engine import think_one_step
 from mouth import extract_final_answer
@@ -19,6 +19,7 @@ import io
 
 # Глобальная память для пользователя
 chat_memory = ChatMemory(max_exchanges=20)
+vector_memory = VectorMemory(persist_dir="./chroma_db")  # Долгосрочная память
 brain = BrainText()
 
 
@@ -39,8 +40,11 @@ class SuppressOutput:
 @cl.on_chat_start
 async def start():
     """Инициализация при запуске чата"""
+    stats = vector_memory.get_stats()
     await cl.Message(
-        content="👋 Привет! Я Chain-of-Thought бот. Задавай любые вопросы или загружай файлы (картинки, PDF, txt, docx)."
+        content=f"👋 Привет! Я Chain-of-Thought бот с долгосрочной памятью.\n\n"
+                f"💾 В памяти: {stats['total_exchanges']} прошлых разговоров\n\n"
+                f"Задавай любые вопросы или загружай файлы (картинки, PDF, txt, docx)."
     ).send()
 
 
@@ -62,6 +66,10 @@ async def main(message: cl.Message):
     
     # Получаем историю
     history = chat_memory.get_formatted_history()
+    
+    # Получаем релевантный контекст из векторной памяти
+    user_text = message.content if isinstance(message.content, str) else "multimodal content"
+    relevant_context = vector_memory.get_relevant_context(user_text, n_results=3)
     
     # Выполняем CoT итерации (с подавлением вывода в UI)
     final_answer = None

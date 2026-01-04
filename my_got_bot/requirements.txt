@@ -3,3 +3,5 @@ python-dotenv
 chainlit
 pymupdf
 python-docx
+chromadb
+sentence-transformers

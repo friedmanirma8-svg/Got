@@ -25,7 +25,7 @@ def load_prompt(filename):
         raise FileNotFoundError(f"Промпт файл не найден: {filepath}")
 
 
-def think_one_step(user_message, history, current_cot, is_first_step=True):
+def think_one_step(user_message, history, current_cot, relevant_context="", is_first_step=True):
     """
     Выполняет одну итерацию Chain-of-Thought размышлений.
     
@@ -33,6 +33,7 @@ def think_one_step(user_message, history, current_cot, is_first_step=True):
     - user_message: текущее сообщение пользователя (str или List[Dict] для мультимодального контента)
     - history: отформатированная история диалога
     - current_cot: текущая цепочка мыслей
+    - relevant_context: релевантный контекст из векторной памяти
     - is_first_step: True для первой итерации, False для последующих
     
     Возвращает: текст ответа модели
@@ -42,7 +43,7 @@ def think_one_step(user_message, history, current_cot, is_first_step=True):
     print("=" * 60)
     
     # Выбираем нужный промпт
-    prompt_file = "cot_initial.txt" if is_first_step else "cot_refine.txt"
+    prompt_file = "cot_initial_v2.txt" if is_first_step else "cot_refine_v2.txt"
     prompt_template = load_prompt(prompt_file)
     
     # Формируем контент сообщения
@@ -54,6 +55,7 @@ def think_one_step(user_message, history, current_cot, is_first_step=True):
         
         # Формируем мультимодальный контент для API
         prompt_text = prompt_template.format(
+            relevant_context=relevant_context,
             history=history,
             user_message=user_message_text,
             current_cot=current_cot if current_cot else "(empty — starting fresh)"
@@ -69,6 +71,7 @@ def think_one_step(user_message, history, current_cot, is_first_step=True):
     else:
         # Обычное текстовое сообщение
         prompt_text = prompt_template.format(
+            relevant_context=relevant_context,
             history=history,
             user_message=user_message,
             current_cot=current_cot if current_cot else "(empty — starting fresh)"

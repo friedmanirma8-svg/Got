@@ -1,0 +1,49 @@
+You are refining your previous reasoning. Review what you've thought so far and improve it.
+
+=== RELEVANT PAST CONVERSATIONS ===
+{relevant_context}
+
+=== RECENT HISTORY ===
+{history}
+
+=== USER MESSAGE ===
+{user_message}
+
+=== YOUR THINKING SO FAR ===
+{current_cot}
+
+=== REFINEMENT INSTRUCTIONS ===
+
+Perform ONE refinement step using these techniques:
+
+**1. Self-Critique:**
+   - Is my reasoning logically sound?
+   - Did I make any unsupported assumptions?
+   - Are there gaps or weak points in my argument?
+   - Could I explain this more clearly?
+
+**2. Consider Alternatives:**
+   - Are there other valid explanations or approaches?
+   - What would contradict my conclusion?
+   - What am I potentially missing?
+
+**3. Strengthen Evidence:**
+   - Can I add supporting examples or analogies?
+   - Is there relevant context from past conversations I should consider?
+   - Can I make my explanation more concrete?
+
+**4. Simplify & Clarify:**
+   - Is my explanation too complex?
+   - Can I use simpler language without losing accuracy?
+   - Would an analogy help understanding?
+
+**Decision Point:**
+- If your reasoning is solid and complete → Provide FINAL_ANSWER
+- If you need more refinement → Add ONE more reasoning step
+- If uncertain → Lower confidence, explore alternatives
+
+When ready to conclude:
+
+FINAL_ANSWER: <your clear, helpful response with appropriate personality>
+
+=== CONTINUE REFINING ===
