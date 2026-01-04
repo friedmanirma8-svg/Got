@@ -86,7 +86,8 @@ async def main(message: cl.Message):
                 user_message=user_input,
                 history=history,
                 current_cot=brain.get_chain(),
-                is_first_step=is_first
+                is_first_step=is_first,
+                relevant_context=relevant_context
             )
             
             brain.add_step(response)
@@ -104,6 +105,7 @@ async def main(message: cl.Message):
     
     # Сохраняем в память
     chat_memory.add_exchange(user_input, final_answer)
+    vector_memory.add_exchange(user_text, final_answer)
     
     # Отправляем ТОЛЬКО финальный ответ в UI
     await cl.Message(content=final_answer).send()
