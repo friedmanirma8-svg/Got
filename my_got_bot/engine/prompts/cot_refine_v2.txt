@@ -1,49 +1,51 @@
-You are refining your previous reasoning. Review what you've thought so far and improve it.
+Ты улучшаешь своё предыдущее рассуждение. Просмотри то, что ты уже обдумал, и улучши это.
 
-=== RELEVANT PAST CONVERSATIONS ===
+⚠️ ВАЖНО: Отвечай исключительно на русском языке. НИКОГДА не добавляй переводы на английский или другие языки в скобках или отдельно. Если пользователь пишет на русском — ответ ТОЛЬКО на русском.
+
+=== РЕЛЕВАНТНЫЕ ПРОШЛЫЕ РАЗГОВОРЫ ===
 {relevant_context}
 
-=== RECENT HISTORY ===
+=== НЕДАВНЯЯ ИСТОРИЯ ===
 {history}
 
-=== USER MESSAGE ===
+=== СООБЩЕНИЕ ПОЛЬЗОВАТЕЛЯ ===
 {user_message}
 
-=== YOUR THINKING SO FAR ===
+=== ТВОЁ РАЗМЫШЛЕНИЕ НА ДАННЫЙ МОМЕНТ ===
 {current_cot}
 
-=== REFINEMENT INSTRUCTIONS ===
+=== ИНСТРУКЦИИ ПО УЛУЧШЕНИЮ ===
 
-Perform ONE refinement step using these techniques:
+Выполни ОДИН шаг улучшения, используя эти техники:
 
-**1. Self-Critique:**
-   - Is my reasoning logically sound?
-   - Did I make any unsupported assumptions?
-   - Are there gaps or weak points in my argument?
-   - Could I explain this more clearly?
+**1. Самокритика:**
+   - Логично ли моё рассуждение?
+   - Делал ли я необоснованные предположения?
+   - Есть ли пробелы или слабые места в моей аргументации?
+   - Могу ли я объяснить это более ясно?
 
-**2. Consider Alternatives:**
-   - Are there other valid explanations or approaches?
-   - What would contradict my conclusion?
-   - What am I potentially missing?
+**2. Рассмотри альтернативы:**
+   - Есть ли другие валидные объяснения или подходы?
+   - Что могло бы противоречить моему выводу?
+   - Что я потенциально упускаю?
 
-**3. Strengthen Evidence:**
-   - Can I add supporting examples or analogies?
-   - Is there relevant context from past conversations I should consider?
-   - Can I make my explanation more concrete?
+**3. Усиль доказательства:**
+   - Могу ли я добавить подтверждающие примеры или аналогии?
+   - Есть ли релевантный контекст из прошлых разговоров, который стоит учесть?
+   - Могу ли я сделать объяснение более конкретным?
 
-**4. Simplify & Clarify:**
-   - Is my explanation too complex?
-   - Can I use simpler language without losing accuracy?
-   - Would an analogy help understanding?
+**4. Упрости и уточни:**
+   - Слишком ли сложное моё объяснение?
+   - Могу ли я использовать более простой язык, не теряя точности?
+   - Поможет ли аналогия для понимания?
 
-**Decision Point:**
-- If your reasoning is solid and complete → Provide FINAL_ANSWER
-- If you need more refinement → Add ONE more reasoning step
-- If uncertain → Lower confidence, explore alternatives
+**Точка принятия решения:**
+- Если твоё рассуждение солидно и полно → Дай FINAL_ANSWER
+- Если нужно больше улучшений → Добавь ЕЩЁ ОДИН шаг рассуждения
+- Если не уверен → Понизь уверенность, исследуй альтернативы
 
-When ready to conclude:
+Когда готов завершить:
 
-FINAL_ANSWER: <your clear, helpful response with appropriate personality>
+FINAL_ANSWER: <твой ясный, полезный ответ с подходящей личностью>
 
-=== CONTINUE REFINING ===
+=== ПРОДОЛЖАЙ УЛУЧШЕНИЕ ===
