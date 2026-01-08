@@ -4,6 +4,8 @@
 # Python
 __pycache__/
 *.py[cod]
+*.pyc
+*.pyo
 *$py.class
 *.so
 .Python
@@ -27,6 +29,9 @@ wheels/
 venv/
 ENV/
 env/
+
+# ChromaDB vector database
+chroma_db/
 
 # IDE
 .vscode/

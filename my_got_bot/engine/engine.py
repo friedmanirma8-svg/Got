@@ -43,7 +43,7 @@ def think_one_step(user_message, history, current_cot, relevant_context="", is_f
     print("=" * 60)
     
     # Выбираем нужный промпт
-    prompt_file = "cot_initial_v2.txt" if is_first_step else "cot_refine_v2.txt"
+    prompt_file = "cot_initial.txt" if is_first_step else "cot_refine.txt"
     prompt_template = load_prompt(prompt_file)
     
     # Формируем контент сообщения
