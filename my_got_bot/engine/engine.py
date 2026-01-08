@@ -15,7 +15,8 @@ def load_prompt(filename):
     """
     Загружает промпт из текстового файла в папке prompts/.
     """
-    prompts_dir = os.path.join(os.path.dirname(__file__), "prompts")
+    # Prompts are now at top level: my_got_bot/prompts/
+    prompts_dir = os.path.join(os.path.dirname(__file__), "..", "prompts")
     filepath = os.path.join(prompts_dir, filename)
     
     try:

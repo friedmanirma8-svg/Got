@@ -6,12 +6,11 @@
 и сохраняет обмен в краткосрочную память. Запускается командой `python main.py`.
 """
 
-from inbox import get_user_message
-from eyes import process_visual_content
+from senses.inbox import get_user_message
+from senses.eyes import process_visual_content
 from memory import ChatMemory, VectorMemory
-from brain import BrainText
-from engine import think_one_step
-from mouth import speak
+from engine import BrainText, think_one_step
+from expression.mouth import speak
 from config import MAX_COT_ITERATIONS
 
 

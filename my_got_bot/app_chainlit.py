@@ -7,11 +7,10 @@
 """
 
 import chainlit as cl
-from eyes import process_visual_content
+from senses.eyes import process_visual_content
 from memory import ChatMemory, VectorMemory
-from brain import BrainText
-from engine import think_one_step
-from mouth import extract_final_answer
+from engine import BrainText, think_one_step
+from expression.mouth import extract_final_answer
 from config import MAX_COT_ITERATIONS
 import sys
 import io
