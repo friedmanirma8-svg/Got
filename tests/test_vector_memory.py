@@ -12,8 +12,9 @@ import shutil
 from pathlib import Path
 import sys
 
-# Add parent directory to path to import modules
+# Add parent directory and my_got_bot to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
+sys.path.insert(0, str(Path(__file__).parent.parent / "my_got_bot"))
 
 from memory.vector_store import VectorMemory
 
@@ -335,6 +336,209 @@ class TestIntegration:
         # Stats check
         stats = memory.get_stats()
         assert stats['total_exchanges'] == 5
+
+
+# ============================================================================
+# NEW TESTS: Senses, Engine, Expression modules
+# ============================================================================
+
+class TestSensesModule:
+    """Test input processing modules (senses/)."""
+    
+    def test_inbox_validation(self):
+        """Test inbox message validation."""
+        # Import here to avoid path issues
+        sys.path.insert(0, str(Path(__file__).parent.parent / "my_got_bot"))
+        from senses.inbox import get_user_message
+        
+        # Can't directly test interactive input, but we can import it
+        assert callable(get_user_message)
+    
+    def test_eyes_text_processing(self):
+        """Test eyes processes text input correctly."""
+        sys.path.insert(0, str(Path(__file__).parent.parent / "my_got_bot"))
+        from senses.eyes import process_visual_content
+        
+        # Test simple text
+        result = process_visual_content("Hello, world!")
+        assert isinstance(result, list)
+        assert len(result) > 0
+        assert result[0]["type"] == "text"
+        assert result[0]["text"] == "Hello, world!"
+    
+    def test_eyes_multimodal_format(self):
+        """Test eyes returns correct format for multimodal content."""
+        sys.path.insert(0, str(Path(__file__).parent.parent / "my_got_bot"))
+        from senses.eyes import process_visual_content
+        
+        # Test with text
+        result = process_visual_content("Test message")
+        
+        # Should be list of dicts
+        assert isinstance(result, list)
+        for item in result:
+            assert isinstance(item, dict)
+            assert "type" in item
+            assert item["type"] in ["text", "image_url"]
+
+
+class TestEngineModule:
+    """Test reasoning engine (engine/)."""
+    
+    def test_brain_initialization(self):
+        """Test BrainText initializes correctly."""
+        sys.path.insert(0, str(Path(__file__).parent.parent / "my_got_bot"))
+        from engine import BrainText
+        
+        brain = BrainText()
+        assert brain.get_chain() == ""
+    
+    def test_brain_add_step(self):
+        """Test adding steps to chain of thought."""
+        sys.path.insert(0, str(Path(__file__).parent.parent / "my_got_bot"))
+        from engine import BrainText
+        
+        brain = BrainText()
+        brain.add_step("First thought")
+        brain.add_step("Second thought")
+        
+        chain = brain.get_chain()
+        assert "First thought" in chain
+        assert "Second thought" in chain
+    
+    def test_brain_clear(self):
+        """Test clearing brain state."""
+        sys.path.insert(0, str(Path(__file__).parent.parent / "my_got_bot"))
+        from engine import BrainText
+        
+        brain = BrainText()
+        brain.add_step("Some thought")
+        assert brain.get_chain() != ""
+        
+        brain.clear()
+        assert brain.get_chain() == ""
+    
+    def test_prompt_loading(self):
+        """Test prompt files load correctly."""
+        sys.path.insert(0, str(Path(__file__).parent.parent / "my_got_bot"))
+        from engine.engine import load_prompt
+        
+        # Test loading initial prompt
+        prompt = load_prompt("cot_initial.txt")
+        assert len(prompt) > 100
+        assert isinstance(prompt, str)
+        
+        # Test loading refine prompt
+        prompt2 = load_prompt("cot_refine.txt")
+        assert len(prompt2) > 100
+        assert isinstance(prompt2, str)
+
+
+class TestExpressionModule:
+    """Test output formatting (expression/)."""
+    
+    def test_extract_final_answer_with_marker(self):
+        """Test extracting answer when FINAL_ANSWER marker is present."""
+        sys.path.insert(0, str(Path(__file__).parent.parent / "my_got_bot"))
+        from expression.mouth import extract_final_answer
+        
+        response = """
+        Some thinking here...
+        
+        FINAL_ANSWER: This is the actual answer.
+        """
+        
+        answer, is_final = extract_final_answer(response)
+        assert is_final is True
+        assert "This is the actual answer" in answer
+        assert "FINAL_ANSWER:" not in answer  # Should be stripped
+    
+    def test_extract_final_answer_without_marker(self):
+        """Test fallback when no FINAL_ANSWER marker."""
+        sys.path.insert(0, str(Path(__file__).parent.parent / "my_got_bot"))
+        from expression.mouth import extract_final_answer
+        
+        response = """
+        First paragraph.
+        
+        Second paragraph.
+        
+        Last paragraph should be returned.
+        """
+        
+        answer, is_final = extract_final_answer(response)
+        assert is_final is False
+        assert "Last paragraph" in answer
+    
+    def test_speak_function(self):
+        """Test speak function (alias for extract_final_answer)."""
+        sys.path.insert(0, str(Path(__file__).parent.parent / "my_got_bot"))
+        from expression.mouth import speak
+        
+        response = "FINAL_ANSWER: Test answer"
+        answer, is_final = speak(response)
+        
+        assert is_final is True
+        assert "Test answer" in answer
+
+
+class TestMemoryChatMemory:
+    """Test short-term memory (chat_memory.py)."""
+    
+    def test_chat_memory_initialization(self):
+        """Test ChatMemory initializes correctly."""
+        sys.path.insert(0, str(Path(__file__).parent.parent / "my_got_bot"))
+        from memory import ChatMemory
+        
+        chat_mem = ChatMemory(max_exchanges=10)
+        history = chat_mem.get_formatted_history()
+        # Empty memory returns "No previous messages."
+        assert history == "No previous messages." or history == ""
+    
+    def test_chat_memory_add_exchange(self):
+        """Test adding exchanges to chat memory."""
+        sys.path.insert(0, str(Path(__file__).parent.parent / "my_got_bot"))
+        from memory import ChatMemory
+        
+        chat_mem = ChatMemory(max_exchanges=3)
+        chat_mem.add_exchange("Hello", "Hi there")
+        chat_mem.add_exchange("How are you?", "I'm good")
+        
+        history = chat_mem.get_formatted_history()
+        assert "Hello" in history
+        assert "Hi there" in history
+        assert "How are you?" in history
+    
+    def test_chat_memory_fifo(self):
+        """Test FIFO behavior (oldest exchanges removed)."""
+        sys.path.insert(0, str(Path(__file__).parent.parent / "my_got_bot"))
+        from memory import ChatMemory
+        
+        chat_mem = ChatMemory(max_exchanges=2)
+        chat_mem.add_exchange("Message 1", "Response 1")
+        chat_mem.add_exchange("Message 2", "Response 2")
+        chat_mem.add_exchange("Message 3", "Response 3")
+        
+        history = chat_mem.get_formatted_history()
+        # Message 1 should be gone
+        assert "Message 1" not in history
+        # Messages 2 and 3 should remain
+        assert "Message 2" in history
+        assert "Message 3" in history
+    
+    def test_chat_memory_clear(self):
+        """Test clearing chat memory."""
+        sys.path.insert(0, str(Path(__file__).parent.parent / "my_got_bot"))
+        from memory import ChatMemory
+        
+        chat_mem = ChatMemory()
+        chat_mem.add_exchange("Test", "Response")
+        assert "Test" in chat_mem.get_formatted_history()
+        
+        chat_mem.clear()
+        history = chat_mem.get_formatted_history()
+        # After clear, should return "No previous messages." or empty
+        assert history == "No previous messages." or history == ""
 
 
 if __name__ == "__main__":
