@@ -8,7 +8,7 @@
 - eyes: Мультимодальная обработка (изображения, PDF, DOCX)
 """
 
-from .inbox import read_user_input
-from .eyes import process_input
+from .inbox import get_user_message
+from .eyes import process_visual_content
 
-__all__ = ["read_user_input", "process_input"]
+__all__ = ["get_user_message", "process_visual_content"]

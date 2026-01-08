@@ -7,6 +7,6 @@
 - mouth: Извлечение финального ответа из цепочки рассуждений
 """
 
-from .mouth import get_final_answer
+from .mouth import extract_final_answer, speak
 
-__all__ = ["get_final_answer"]
+__all__ = ["extract_final_answer", "speak"]
